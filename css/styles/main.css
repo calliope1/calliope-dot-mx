@@ -1,0 +1,97 @@
+#content {
+	position: relative;
+}
+
+#content img {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+}
+
+.buttonw {
+	background-color: white;
+	border: none;
+	color: black;
+}
+
+.buttonb {
+	background-color: black;
+	border: none;
+	color: white;
+}
+
+li{
+	margin: 4px 0;
+}
+
+body {
+	margin: 0;
+}
+
+main {
+	margin: 10px;
+}
+
+footer {
+	margin: 10px;
+}
+
+.header {
+	margin: 0;
+	overflow: hidden;
+	background-color: #f1f1f1;
+	padding: 10px 10px;
+}
+
+.header a {
+	float: left;
+	color: black;
+	text-align: center;
+	padding: 12px;
+	text-decoration: none;
+	font-size: 18px;
+	line-height: 25px;
+	border-radius: 4px;
+}
+
+.header a.logo {
+	font-size: 30px;
+	font-weight: bold;
+}
+
+.header a:hover {
+	background-color: #ddd;
+	color: black;
+}
+
+.header a.active {
+	background-color: dodgerblue;
+	color: white;
+}
+
+.header-right {
+	float: right;
+}
+
+.header-right-nopad a {
+	float: right;
+	padding: 0px 0px;
+	padding-left: 10px;
+	margin: 0;
+}
+
+.header-right-nopad a:hover {
+	background-color: #f1f1f1;
+}
+
+@media screen and (max-width: 500px) {
+	.header a {
+		float: none;
+		display: block;
+		text-align: left;
+	}
+
+	.header-right {
+		float:none;
+	}
+}

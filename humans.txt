@@ -1,0 +1,1 @@
+calliope.mx is the personal website of Calliope Ryan-Smith, a researcher of mathematics. It hosts their personal academic website (academic.calliope.mx) and some other utilities that they have developed.

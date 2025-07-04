@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<base href="..">
+
+<title>Minims calculator</title>
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="stylesheet" type="text/css" href="academic/css/styles/main.css">
+
+<meta name="viewport" content="width=device width, initial-scale=1">
+
+  <style>
+    .highlight {
+      background-color: yellow;
+      font-weight: bold;
+    }
+  </style>
+
+</head>
+
+<body id="body">
+
+<header id="header">
+
+<div class="header">
+
+	<a href="" class="logo">Calliope Ryan-Smith</a>
+
+	<div class="header-right-nopad">
+		<a href="https://www.srcf.net/"><img src="https://www.srcf.net/images/poweredby-dark.svg" alt="Powered by the Student-Run Computing Facility (SRCF)"></a>
+	</div>
+
+</div>
+
+</header>
+
+<main id="main">
+
+<script>
+let englishWordsSet = new Set();
+let wordsLoaded = false;
+
+fetch('minims/englishWords.json')
+  .then(response => response.json())
+  .then(data => {
+    englishWordsSet = new Set(data.map(word => word.trim().toUpperCase()));
+    wordsLoaded = true;
+    document.getElementById('generateBtn').disabled = false;
+  })
+  .catch(error => {
+    console.error('Error loading englishWords.json:', error);
+    alert("Failed to load English words list.");
+  });
+
+function minims(N) {
+  N = parseInt(N);
+  if (N < 0) return [];
+  if (N === 0) return [""];
+
+  const listMinusOne = minims(N - 1);
+  const listMinusTwo = minims(N - 2);
+  const listMinusThree = minims(N - 3);
+  const outList = [];
+
+  for (let i = 0; i < listMinusOne.length; i++) {
+    outList.push(listMinusOne[i] + "I");
+  }
+  for (let j = 0; j < listMinusTwo.length; j++) {
+    outList.push(listMinusTwo[j] + "U");
+    outList.push(listMinusTwo[j] + "V");
+    outList.push(listMinusTwo[j] + "N");
+  }
+  for (let k = 0; k < listMinusThree.length; k++) {
+    outList.push(listMinusThree[k] + "M");
+  }
+
+  return outList;
+}
+
+function listSand(s, e, L) {
+  const outList = [];
+  s = s.toUpperCase();
+  e = e.toUpperCase();
+  for (let i = 0; i < L.length; i++) {
+    const fullWord = s + L[i] + e;
+    const isWord = englishWordsSet.has(fullWord);
+    const display = isWord
+      ? `<span class="highlight">${fullWord}</span>`
+      : fullWord;
+    outList.push(`<div>${display}</div>`);
+  }
+  return outList.join("");
+}
+
+function generateResults() {
+  if (!wordsLoaded) {
+    alert("Word list still loading. Please wait.");
+    return;
+  }
+  const pre = document.getElementById('preText').value;
+  const post = document.getElementById('postText').value;
+  const n = document.getElementById('valueN').value;
+  const results = listSand(pre, post, minims(n));
+  document.getElementById('display').innerHTML = results;
+}
+</script>
+
+<noscript>You'll need to enable JavaScript to use this webpage.</noscript>
+
+<h1>Minims calculator</h1>
+
+<p>
+This version tries to automatically highlight English words (and some middle English and Latin words, but it's hard to find good text dumps for these). If you prefer a version without bells and whistles, that can be found <a href="minims/old.html">here</a>.
+</p>
+
+<label for="preText">Text before:</label>
+<input type="text" id="preText"><br>
+
+<label for="valueN"># Minims:</label>
+<input type="number" id="valueN"><br>
+
+<label for="postText">Text after:</label>
+<input type="text" id="postText"><br>
+
+<button type="button" id="generateBtn" onclick="generateResults()" disabled>
+  Generate answers.
+</button>
+
+<div id="display"></div>
+</main>
+</body>
+</html>
