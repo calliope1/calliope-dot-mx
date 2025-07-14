@@ -1,7 +1,7 @@
 <?php
 // Load database and return results
     // Load credentials and connect
-    require_once __DIR__ . '/../config.php';
+    require_once __DIR__ . '/config.php';
     $conn = new mysqli($db_host, $db_user, $db_password, $db_name);
 
     // Check connection
@@ -14,7 +14,7 @@
     $result = $conn->query($sql);
 
 // papers-presentation is some long php functions that presents the papers how I like
-include '../builder/papers-presentation.php';
+include 'builder/papers-presentation.php';
 ?>
 
 <!DOCTYPE html>
