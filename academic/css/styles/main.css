@@ -7,6 +7,12 @@
 	top: 0px;
 	right: 0px;
 }
+.no-doi {
+	font-color: gray;
+}
+.smallcaps {
+	font-variant: small-caps;
+}
 
 .buttonw {
 	background-color: white;
