@@ -6,7 +6,7 @@
 
   <div class="header-right-nopad">
     <!-- I could probably afford to make the srcf svg dynamic -->
-    <a href="https://www.srcf.net/"><img src="https://www.srcf.net/images/poweredby-dark.svg" alt="Powered by the Student-Run Computing Facility (SRCF)", style="width:125px;height:50px"></a>
+    <a href="https://www.srcf.net/"><img src="https://www.srcf.net/images/poweredby-dark.svg" alt="Powered by the Student-Run Computing Facility (SRCF)" style="width:125px;height:50px"></a>
   </div>
   <nav>
     <div class="header-right">

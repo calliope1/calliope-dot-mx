@@ -4,7 +4,7 @@
 
 function tabulateBibEntry($entryName,$spaces,$entryData) {
     $tab = "&emsp;";
-    return $tab . "\t" . $entryName . str_repeat("&nbsp;",$spaces) . "= {" . $entryData . "},<br>";
+    return "{$tab}\t{$entryName}" . str_repeat("&nbsp;", $spaces) . "= {{$entryData}},<br>\n";
 }
 
 // Decodes the raw json $row['coauthor_json'] into an alphabetised list of SURNAME, FIRSTNAME (and) authors
@@ -13,8 +13,8 @@ function decodeCoauthors($authors) {
     $authorsArray = json_decode($authors,true);
     // Add me
     $calliope = [
-        'first' => 'Calliope',
-        'last' => 'Ryan-Smith'
+        "first" => "Calliope",
+        "last" => "Ryan-Smith"
         ];
     $authorsArray[] = $calliope;
 
@@ -25,7 +25,7 @@ function decodeCoauthors($authors) {
     $outString = '';
 
     foreach ($authorsArray as $author) {
-        $outString .= $author['last'] . ", " . $author['first'] . ' and ';
+        $outString .= "{$author['last']}, {$author['first']} and ";
     }
 
     // Remove trailing " and "
@@ -40,64 +40,79 @@ function decodeCoauthors($authors) {
 // I'll get around to doing that if I have to include more cases or when I get more papers.
 
 function bibEntry($row) {
-    $tab = "&emsp;";
     $title = $row['bib_title'];
     if ($title == '') {
         $title = $row['title'];
     }
     $author = decodeCoauthors($row['coauthor_json']);
     $publicationStage = $row['publication_stage'];
-    $url = "arxiv.org/abs/" . $row['arxiv_prefix'] . "." . $row['arxiv_suffix'];
-    $note = "";
-    if ($publicationStage == 0) {
-        $journal = "ar{X}iv";
-        $fjournal = "ar{X}iv";
-        $volume = $row['arxiv_prefix'] . "." . $row['arxiv_suffix'];
-        $year = $row['year_released'];
-    } else {
-        $journal = $row['short_journal'];
-        $fjournal = $row['full_journal'];
-        $doi = $row['doi'];
-        if ($publicationStage == 1) {
+    $arxivNumber = "{$row['arxiv_prefix']}.{$row['arxiv_suffix']}";
+    $url = "arxiv.org/abs/{$arxivNumber}";
+    $note = '';
+    $journal = $row['short_journal'];
+    $fjournal = $row['full_journal'];
+    $doi = $row['doi'];
+    switch ($publicationStage) {
+        case 0:
+            $journal = "ar{X}iv";
+            $fjournal = "ar{X}iv";
+            $volume = $arxivNumber;
+            $year = $row['year_released'];
+            break;
+        case 1:
             $note = "In press. Preprint available on ar{X}iv";
             $year = $row['year_accepted'];
-        } elseif ($publicationStage == 2) {
+            break;
+        case 2:
             $note = "Online-first";
             $year = $row['year_published'];
-        } elseif ($publicationStage == 3) {
+            break;
+        case 3:
             $volume = $row['volume'];
             $year = $row['year_published'];
             $number = $row['number'];
             $pages = $row['pages_start'] . "--" . $row['pages_end'];
-        } else {
+            break;
+        default:
             return "Error in entry " . $row['title'];
-        }
+            break;
     }
     $entryUniversal = "@article{RS"
         . $row['release_index'] . "-"
-        . max($row['year_released'],$row['year_accepted'],$row['year_published']) . ",<br>"
+        . max($row['year_released'],$row['year_accepted'],$row['year_published']) . ",<br>\n"
         . tabulateBibEntry("title",4,$title)
         . tabulateBibEntry("author",3,$author)
         . tabulateBibEntry("journal",2,$journal)
         . tabulateBibEntry("fjournal",1,$fjournal)
         . tabulateBibEntry("year",5,$year);
-    if ($publicationStage == 0) {
-        $entryFinal = $entryUniversal . tabulateBibEntry("volume",3,$volume)
-            . tabulateBibEntry("url",6,$url);
-    } elseif ($publicationStage == 1) {
-        $entryFinal = $entryUniversal . tabulateBibEntry("note",5,$note)
-            . tabulateBibEntry("url",6,$url);
-    } elseif ($publicationStage == 2) {
-        $entryFinal = $entryUniversal . tabulateBibEntry("note",5,$note)
-            . tabulateBibEntry("doi",6,$doi);
-    } elseif ($publicationStage == 3) {
-        $entryFinal = $entryUniversal . tabulateBibEntry("volume",3,$volume)
-            . tabulateBibEntry("number",3,$number)
-            . tabulateBibEntry("pages",4,$pages)
-            . tabulateBibEntry("doi",6,$doi);
-    } else {
-        return "Error with entry " . $title . "!";
+    switch ($publicationStage) {
+        case 0:
+            $entryFinal = $entryUniversal
+                . tabulateBibEntry("volume", 3, $volume)
+                . tabulateBibEntry("url", 6, $url);
+            break;
+        case 1:
+            $entryFinal = $entryUniversal
+                . tabulateBibEntry("note",5,$note)
+                . tabulateBibEntry("url",6,$url);
+            break;
+        case 2:
+            $entryFinal = $entryUniversal
+                . tabulateBibEntry("note",5,$note)
+                . tabulateBibEntry("doi",6,$doi);
+            break;
+        case 3:
+            $entryFinal = $entryUniversal
+                . tabulateBibEntry("volume",3,$volume)
+                . tabulateBibEntry("number",3,$number)
+                . tabulateBibEntry("pages",4,$pages)
+                . tabulateBibEntry("doi",6,$doi);
+            break;
+        default:
+            return "Error with entry " . $title . "!";
+            break;
     }
+
     return substr($entryFinal,0,-5) . "<br>\n}";
 }
 ?>
